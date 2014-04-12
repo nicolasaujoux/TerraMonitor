@@ -3,12 +3,15 @@ TerraMonitor
 
 This is an Arduino Project used to monitor temperature, humidity and light in
 a terrarium.
-<<<<<<< HEAD
 
-Install ino
------------
-sudo apt-get install python-setuptools picocom arduino
-sudo easy_install ino
+Libraries
+---------
 
-=======
->>>>>>> 0c959d45c614b5eb5f98c1217ab4dc4e3ce13163
+All the libraries necessary to compile the project are in the lib folder.
+Here is a list of the libraries and a link to their project.
+* DS1307RTC : in the Time library
+* SHT10 humidity and temperature sensor
+  : https://github.com/Trefex/arduino-airquality . This one seems to work better
+  than the official.
+* LCD i2c screen : http://www.dfrobot.com/wiki/index.php/I2C/TWI_LCD1602_Module_(Gadgeteer_Compatible)_(SKU:_DFR0063)
+
