@@ -13,5 +13,6 @@ Here is a list of the libraries and a link to their project.
 * SHT10 humidity and temperature sensor
   : https://github.com/Trefex/arduino-airquality . This one seems to work better
   than the official.
-* LCD i2c screen : http://www.dfrobot.com/wiki/index.php/I2C/TWI_LCD1602_Module_(Gadgeteer_Compatible)_(SKU:_DFR0063)
+* LCD i2c screen : http://www.dfrobot.com/wiki/index.php/I2C/TWI_LCD1602_Module_(Gadgeteer_Compatible)_(SKU:_DFR0063).
+* ArduinoThread : https://github.com/ivanseidel/ArduinoThread
 
