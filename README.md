@@ -15,4 +15,5 @@ Here is a list of the libraries and a link to their project.
   than the official.
 * LCD i2c screen : http://www.dfrobot.com/wiki/index.php/I2C/TWI_LCD1602_Module_(Gadgeteer_Compatible)_(SKU:_DFR0063).
 * ArduinoThread : https://github.com/ivanseidel/ArduinoThread
+* TimerOne (for interrupt) : http://playground.arduino.cc/code/timer1
 
