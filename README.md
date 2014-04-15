@@ -9,6 +9,7 @@ Libraries
 
 All the libraries necessary to compile the project are in the lib folder.
 Here is a list of the libraries and a link to their project.
+* Arduino Makefile : https://github.com/sudar/Arduino-Makefile
 * DS1307RTC : in the Time library
 * SHT10 humidity and temperature sensor
   : https://github.com/Trefex/arduino-airquality . This one seems to work better
@@ -17,3 +18,8 @@ Here is a list of the libraries and a link to their project.
 * ArduinoThread : https://github.com/ivanseidel/ArduinoThread
 * TimerOne (for interrupt) : http://playground.arduino.cc/code/timer1
 
+Makefile Usage
+--------------
+* Use `make` to compile the project
+* `make upload` to upload it to the arduino
+* `make monitor` to dispay serial output (screen package necessary)
