@@ -24,10 +24,10 @@ SHT10SensorThread::~SHT10SensorThread()
 
 void SHT10SensorThread::run()
 {
-    temp = sensor->retrieveTemperatureC(); 
-    computeMinMaxTemp(); 
     humidity = sensor->readHumidity(); 
     computeMinMaxHumidity();
+    temp = sensor->retrieveTemperatureC(); 
+    computeMinMaxTemp(); 
 
     runned();
 }
