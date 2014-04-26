@@ -4,6 +4,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <Time.h>
 #include <DS1307RTC.h>
+#include <TimeAlarms.h>
 
 #include "ThreadController.h"
 #include "TimerOne.h"
@@ -23,7 +24,7 @@
 #define FAN_HEATER_FRONT_PIN 9 //new one
 
 #define RELAY_PCF_I2C_ADDRESS 0x38
-#define RELAY_PCF_FOG_PINNB 4
+#define RELAY_PCF_FOG_PINNB 0
 #define RELAY_PCF_HEAT_PINNB 1
 #define RELAY_PCF_LIGHT_PINNB 2
 
@@ -57,8 +58,28 @@ void timerCallback()
 	controller.run();
 }
 
+// functions to be called when an alarm triggers:
+void MorningAlarm(){
+  Serial.println("Alarm: - turn lights off");   
+  fogRelay.on();
+  delay(30000);
+  fogRelay.off();
+}
+
 void setup()
 {
+    tmElements_t currentTime;
+
+    currentTime.Second = 0;
+    currentTime.Minute = 50;
+    currentTime.Hour = 20;
+    currentTime.Wday = 5;
+    currentTime.Day = 17;
+    currentTime.Month = 4;
+    currentTime.Year = 44;
+
+    // RTC.set(makeTime(currentTime));
+
     Serial.begin(9600);
     Wire.begin(); 
 
@@ -80,6 +101,11 @@ void setup()
     // Timer1.initialize(100000);
     // Timer1.attachInterrupt(timerCallback);
 
+    // Alarms
+    Alarm.alarmRepeat(12,00,0, MorningAlarm);  // 8:30am every day
+    Alarm.alarmRepeat(17,30,0, MorningAlarm);  // 8:30am every day
+    Alarm.alarmRepeat(22,15,0, MorningAlarm);  // 8:30am every day
+
     lcd.init();                      // initialize the lcd 
  
     // Print a message to the LCD.
@@ -96,6 +122,7 @@ void loop()
     // Serial.print(humidTempSensor.getHumidity());
     // Serial.print(" Temperature Bas: ");
     // Serial.println(lowSensor.getAverageValue());
+    Serial.println();
 
     lcd.clear();
     lcd.setCursor(0,0);
@@ -110,7 +137,15 @@ void loop()
     lcd.print(lowSensor.getAverageValue());
     lcd.print("Degres C");
 
+    // fogRelay.on();
+    // // lightRelay.on();
+    // // heatRelay.on();
+    // delay(5000);
+    // fogRelay.off();
+    // // lightRelay.off();
+    // // heatRelay.off();
     delay(1000);
+    Alarm.delay(1000);
 }
 
 void digitalClockDisplay(time_t time)
@@ -124,8 +159,9 @@ void digitalClockDisplay(time_t time)
 void printDigits(int digits, char separator)
 {
   if (separator != NULL)
-    lcd.print(separator);
+    Serial.print(separator);
   if(digits < 10)
-    lcd.print('0');
-  lcd.print(digits);
+    Serial.print('0');
+  Serial.print(digits);
 }
+
