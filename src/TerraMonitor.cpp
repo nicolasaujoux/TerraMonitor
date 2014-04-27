@@ -5,14 +5,16 @@
 #include <Time.h>
 #include <DS1307RTC.h>
 #include <TimeAlarms.h>
-
 #include "ThreadController.h"
 #include "TimerOne.h"
+
+#include "common.h"
 
 #include "TempSensor.h"
 #include "SHT10Sensor.h"
 #include "FanController.h"
 #include "RelayControllerI2C.h"
+#include "HumidityController.h"
 
 #define LOW_SENSOR_PIN 0
 
@@ -47,6 +49,8 @@ RelayControllerI2C fogRelay (RELAY_PCF_I2C_ADDRESS, RELAY_PCF_FOG_PINNB);
 RelayControllerI2C lightRelay (RELAY_PCF_I2C_ADDRESS, RELAY_PCF_LIGHT_PINNB);
 RelayControllerI2C heatRelay (RELAY_PCF_I2C_ADDRESS, RELAY_PCF_HEAT_PINNB);
 
+/* Humidity controller */
+HumidityController* humidityController;
 
 void digitalClockDisplay(time_t time);
 void printDigits(int digits, char separator);
@@ -55,12 +59,11 @@ void printDigits(int digits, char separator);
 // This is the callback for the Timer
 void timerCallback()
 {
-	controller.run();
+    // Serial.print("Interrupt");
 }
 
 // functions to be called when an alarm triggers:
 void MorningAlarm(){
-  Serial.println("Alarm: - turn lights off");   
   fogRelay.on();
   delay(30000);
   fogRelay.off();
@@ -81,13 +84,21 @@ void setup()
     // RTC.set(makeTime(currentTime));
 
     Serial.begin(9600);
+    Serial.println("TerraMonitor starting ...");
     Wire.begin(); 
 
-    setSyncProvider(RTC.get);   // the function to get the time from the RTC
+    
+
+    Serial.print("EEPROM HumidityController size occupied (in bytes) : ");
+    Serial.println(EEPROM_HUMIDITY_CONTROLLER_SIZE);
+
+    setSyncProvider(RTC.get);   // the function to get the time from the RTC    
     if(timeStatus()!= timeSet) 
         Serial.println("Unable to sync with the RTC");
     else
         Serial.println("RTC has set the system time");
+
+    humidityController = new HumidityController(&fogRelay, &humidTempSensor);
 
     /* read the sensor every s */
     lowSensor.setInterval(1000);
@@ -98,13 +109,17 @@ void setup()
     controller.add(&lowSensor);
     controller.add(&humidTempSensor);
     
-    // Timer1.initialize(100000);
-    // Timer1.attachInterrupt(timerCallback);
+    Timer1.initialize(100000);
+    Timer1.attachInterrupt(timerCallback);
 
     // Alarms
     Alarm.alarmRepeat(12,00,0, MorningAlarm);  // 8:30am every day
+    // Alarm.alarmRepeat(14,48,0, MorningAlarm);  // 8:30am every day
     Alarm.alarmRepeat(17,30,0, MorningAlarm);  // 8:30am every day
     Alarm.alarmRepeat(22,15,0, MorningAlarm);  // 8:30am every day
+
+    // humidityController->setAlarm(0, 11, 30, 30, 4);
+    // humidityController->setAlarm(1, 11, 42, 30, 8);
 
     lcd.init();                      // initialize the lcd 
  
@@ -115,7 +130,9 @@ void setup()
 
 void loop()
 {
+    /* Runs the non RT controller */
     controller.run();
+
     // Serial.print(" Temperature milieu: ");
     // Serial.print(humidTempSensor.getTemp());
     // Serial.print(" Humidite milieu: ");
@@ -124,7 +141,8 @@ void loop()
     // Serial.println(lowSensor.getAverageValue());
     Serial.println();
 
-    lcd.clear();
+    // lcd.cursor();
+    // lcd.clear();
     lcd.setCursor(0,0);
     digitalClockDisplay(now());
     lcd.setCursor(0,1);
@@ -144,7 +162,7 @@ void loop()
     // fogRelay.off();
     // // lightRelay.off();
     // // heatRelay.off();
-    delay(1000);
+    lcd.setCursor(0,1);
     Alarm.delay(1000);
 }
 

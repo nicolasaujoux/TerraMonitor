@@ -7,7 +7,8 @@
 
 #include "Time.h"
 
-#define dtNBR_ALARMS 6   // max is 255
+// #define dtNBR_ALARMS 6   // max is 255
+#define dtNBR_ALARMS 10   // max is 255
 
 #define USE_SPECIALIST_METHODS  // define this for testing
 
@@ -95,6 +96,7 @@ public:
   time_t read(AlarmID_t ID);                // return the value for the given timer  
   dtAlarmPeriod_t readType(AlarmID_t ID);   // return the alarm type for the given alarm ID 
   
+#define USE_SPECIALIST_METHODS
 #ifndef USE_SPECIALIST_METHODS  
 private:  // the following methods are for testing and are not documented as part of the standard library
 #endif
