@@ -26,12 +26,12 @@ typedef struct
     uint8_t hour;
     uint8_t min;
     uint8_t sec;
-} AlarmParameters_t;
+} HumidityAlarmParameters_t;
 
 typedef struct 
 {
     AlarmID_t id;       /* Id given by the TimeAlarms library */
-    AlarmParameters_t params;
+    HumidityAlarmParameters_t params;
 } HumidityControllerAlarm_t;
 
 #define HUMIDITY_CONTROLLER_MAX_NB_ALARMS 6
@@ -52,18 +52,18 @@ public:
     uint8_t disableAlarm (uint8_t index);
     uint8_t disableAllAlarms ();
 
-    // uint8_t getIsFogging() const {return isFogging;}
+    uint8_t getIsFogging() const {return *pIsFogging;}
 
 protected:
-    void initAlarms ();
-    void readEepromAlarm (uint8_t index, AlarmParameters_t* params);
-    void writeEepromAlarm (uint8_t index, AlarmParameters_t* params);
+    uint8_t initAlarms ();
+    void readEepromAlarm (uint8_t index, HumidityAlarmParameters_t* params);
+    void writeEepromAlarm (uint8_t index, HumidityAlarmParameters_t* params);
     static void fogAlarmStart();
     static void fogAlarmStop();
     uint8_t createAlarm (uint8_t index);
 
     controlMode_t mode;
-    // uint8_t isFogging;
+    uint8_t* pIsFogging;
 };
 
 #endif /* HUMIDITY_CONTROLLER_H */

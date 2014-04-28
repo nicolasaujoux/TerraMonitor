@@ -10,13 +10,15 @@
 /* Global variable to be accessible from TimeAlarms library 
 * probably not the best option but nothing else comes to mind right now ...
 */
-static RelayControllerI2C* relayCommand;
+static RelayControllerI2C* humidityRelayCommand;
 static HumidityControllerAlarm_t alarms[HUMIDITY_CONTROLLER_MAX_NB_ALARMS];
 static SHT10SensorThread* humiditySensor;
 
-HumidityController::HumidityController(RelayControllerI2C* _relayCommand, SHT10SensorThread* _humiditySensor)
+static uint8_t isFogging;
+
+HumidityController::HumidityController(RelayControllerI2C* _humidityRelayCommand, SHT10SensorThread* _humiditySensor)
 {
-    relayCommand = _relayCommand;
+    humidityRelayCommand = _humidityRelayCommand;
     humiditySensor = _humiditySensor;
 
     /* set all alarmsId of the array to 255 (alarm free) */
@@ -24,6 +26,9 @@ HumidityController::HumidityController(RelayControllerI2C* _relayCommand, SHT10S
     {
         alarms[i].id = 255;
     }
+
+    pIsFogging = &isFogging;
+    isFogging = 0;
 
     initAlarms();
 }
@@ -89,7 +94,8 @@ uint8_t HumidityController::disableAllAlarms ()
 
 void HumidityController::fogAlarmStop()
 {
-    // relayCommand->off();
+    // humidityRelayCommand->off();
+    isFogging = 0;
     Serial.println("stop");
 }
 
@@ -108,14 +114,15 @@ void HumidityController::fogAlarmStart()
         }
     }
     // /* Switch on the relay */
-    // relayCommand->on();
+    // humidityRelayCommand->on();
+    isFogging = 1;
 
     Serial.println("start");
     /* Set up a timer to stop the relay */
     Alarm.timerOnce(alarms[i].params.duration, fogAlarmStop);
 }
 
-void HumidityController::initAlarms ()
+uint8_t HumidityController::initAlarms ()
 {
     for (uint8_t i = 0; i < HUMIDITY_CONTROLLER_MAX_NB_ALARMS; ++i)
     {
@@ -127,28 +134,28 @@ void HumidityController::initAlarms ()
     }
 }
 
-void HumidityController::readEepromAlarm (uint8_t _index, AlarmParameters_t* _pParams)
+void HumidityController::readEepromAlarm (uint8_t _index, HumidityAlarmParameters_t* _pParams)
 {
     uint8_t* pRead;
 
     pRead = (uint8_t*)_pParams;
 
-    for (uint8_t i = 0; i < (sizeof(AlarmParameters_t)/sizeof(uint8_t)); ++i)
+    for (uint8_t i = 0; i < (sizeof(HumidityAlarmParameters_t)/sizeof(uint8_t)); ++i)
     {
         *(pRead + i) = EEPROM.read(EEPROM_HUMIDITY_CONTROLLER_START_ADDR + 
-            (_index * sizeof(AlarmParameters_t)) + i);
+            (_index * sizeof(HumidityAlarmParameters_t)) + i);
     }
 }
 
-void HumidityController::writeEepromAlarm (uint8_t _index, AlarmParameters_t* _pParams)
+void HumidityController::writeEepromAlarm (uint8_t _index, HumidityAlarmParameters_t* _pParams)
 {
     uint8_t* pWrite;
     
     pWrite = (uint8_t*)_pParams;
 
-    for (uint8_t i = 0; i < (sizeof(AlarmParameters_t)/sizeof(uint8_t)); ++i)
+    for (uint8_t i = 0; i < (sizeof(HumidityAlarmParameters_t)/sizeof(uint8_t)); ++i)
     {
-        EEPROM.write(EEPROM_HUMIDITY_CONTROLLER_START_ADDR + (_index * sizeof(AlarmParameters_t)) + i,
+        EEPROM.write(EEPROM_HUMIDITY_CONTROLLER_START_ADDR + (_index * sizeof(HumidityAlarmParameters_t)) + i,
             *(pWrite + i));
     }
 }

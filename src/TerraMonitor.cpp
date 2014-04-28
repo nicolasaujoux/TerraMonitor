@@ -15,6 +15,7 @@
 #include "FanController.h"
 #include "RelayControllerI2C.h"
 #include "HumidityController.h"
+#include "LightController.h"
 
 #define LOW_SENSOR_PIN 0
 
@@ -51,6 +52,8 @@ RelayControllerI2C heatRelay (RELAY_PCF_I2C_ADDRESS, RELAY_PCF_HEAT_PINNB);
 
 /* Humidity controller */
 HumidityController* humidityController;
+/* Light Controller */
+LightController* lightController;
 
 void digitalClockDisplay(time_t time);
 void printDigits(int digits, char separator);
@@ -99,6 +102,7 @@ void setup()
         Serial.println("RTC has set the system time");
 
     humidityController = new HumidityController(&fogRelay, &humidTempSensor);
+    lightController = new LightController(&lightRelay);
 
     /* read the sensor every s */
     lowSensor.setInterval(1000);
@@ -120,6 +124,9 @@ void setup()
 
     // humidityController->setAlarm(0, 11, 30, 30, 4);
     // humidityController->setAlarm(1, 11, 42, 30, 8);
+
+    // lightController->setStartTime(11,30,0);
+    // lightController->setStopTime(23,30,0);
 
     lcd.init();                      // initialize the lcd 
  
@@ -164,6 +171,7 @@ void loop()
     // // heatRelay.off();
     lcd.setCursor(0,1);
     Alarm.delay(1000);
+    delay(1000);
 }
 
 void digitalClockDisplay(time_t time)

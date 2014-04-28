@@ -22,7 +22,7 @@ void RelayControllerI2C::on()
     Wire.beginTransmission(i2cAddress);
     pinBit = Wire.read();
     pinBit &= ~(1 << PCFPinNb); //this doesn't work ??
-    pinBit = 0; 
+    // pinBit = 0; 
     Wire.write(pinBit);
     Wire.endTransmission();
 
