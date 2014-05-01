@@ -33,6 +33,18 @@ HumidityController::HumidityController(RelayControllerI2C* _humidityRelayCommand
     initAlarms();
 }
 
+uint8_t HumidityController::initAlarms ()
+{
+    for (uint8_t i = 0; i < HUMIDITY_CONTROLLER_MAX_NB_ALARMS; ++i)
+    {
+        readEepromAlarm(i, &(alarms[i].params));
+        if (createAlarm(i) != SUCCESS)
+        {
+            return ERROR;
+        }
+    }
+}
+
 void HumidityController::setMode (controlMode_t _mode)
 {
     mode = _mode;
@@ -94,7 +106,7 @@ uint8_t HumidityController::disableAllAlarms ()
 
 void HumidityController::fogAlarmStop()
 {
-    // humidityRelayCommand->off();
+    humidityRelayCommand->off();
     isFogging = 0;
     Serial.println("stop");
 }
@@ -113,25 +125,13 @@ void HumidityController::fogAlarmStart()
             break;
         }
     }
-    // /* Switch on the relay */
-    // humidityRelayCommand->on();
+    /* Switch on the relay */
+    humidityRelayCommand->on();
     isFogging = 1;
 
     Serial.println("start");
     /* Set up a timer to stop the relay */
     Alarm.timerOnce(alarms[i].params.duration, fogAlarmStop);
-}
-
-uint8_t HumidityController::initAlarms ()
-{
-    for (uint8_t i = 0; i < HUMIDITY_CONTROLLER_MAX_NB_ALARMS; ++i)
-    {
-        readEepromAlarm(i, &(alarms[i].params));
-        if (createAlarm(i) != SUCCESS)
-        {
-            return ERROR;
-        }
-    }
 }
 
 void HumidityController::readEepromAlarm (uint8_t _index, HumidityAlarmParameters_t* _pParams)
@@ -186,3 +186,6 @@ uint8_t HumidityController::createAlarm (uint8_t _index)
     return SUCCESS;
 }
 
+/*
+* EOF
+*/

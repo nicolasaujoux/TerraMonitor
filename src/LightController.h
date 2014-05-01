@@ -29,11 +29,12 @@ class LightController
 {
 public:
     LightController(RelayControllerI2C* lightRelayCommand);
+    uint8_t initAlarms ();
+
     uint8_t setStartTime(uint8_t hour, uint8_t min, uint8_t sec);
     uint8_t setStopTime(uint8_t hour, uint8_t min, uint8_t sec);
 
 protected:
-    uint8_t initAlarms ();
     void readEepromAlarm (uint8_t _index, LightAlarmParameters_t* _pParams);
     void writeEepromAlarm (uint8_t _index, LightAlarmParameters_t* _pParams);
     uint8_t createAlarm (uint8_t _index);

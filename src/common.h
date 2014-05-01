@@ -15,6 +15,9 @@
 #define SUCCESS 0
 #define ERROR 1
 
+/* FAN errors */
+#define FAN_ALREADY_RUNNING 10
+
 /*****************************************************
 *                  EEPROM MAPPING
 *****************************************************/

@@ -45,6 +45,7 @@ class HumidityController
 {
 public:
     HumidityController(RelayControllerI2C* relayCommand, SHT10SensorThread* humiditySensor);
+    uint8_t initAlarms ();
 
     void setMode (controlMode_t mode);
     uint8_t setAlarm (uint8_t index, uint8_t hour, uint8_t min, uint8_t sec, uint8_t duration);
@@ -55,7 +56,6 @@ public:
     uint8_t getIsFogging() const {return *pIsFogging;}
 
 protected:
-    uint8_t initAlarms ();
     void readEepromAlarm (uint8_t index, HumidityAlarmParameters_t* params);
     void writeEepromAlarm (uint8_t index, HumidityAlarmParameters_t* params);
     static void fogAlarmStart();

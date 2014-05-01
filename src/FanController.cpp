@@ -3,12 +3,13 @@
 */
 
 #include "FanController.h"
+#include "common.h"
 
 #include <Arduino.h>
 
 #define FANCONTROLLER_DEFAULT_MAX_SPEED 255
 
-FanController::FanController(int _pwmPin)
+FanController::FanController(uint8_t _pwmPin)
 {
 	pwmPin = _pwmPin;
     maxSpeed = FANCONTROLLER_DEFAULT_MAX_SPEED;
@@ -17,10 +18,15 @@ FanController::FanController(int _pwmPin)
     stopFan();
 }
 
-void FanController::startFan()
+uint8_t FanController::startFan()
 {
-    analogWrite(pwmPin, maxSpeed);
-    isFanOn = 1;
+    if (isFanOn != 1)
+    {
+        analogWrite(pwmPin, maxSpeed);
+        isFanOn = 1;
+        return SUCCESS;
+    }
+    return FAN_ALREADY_RUNNING;
 }
 
 void FanController::stopFan()
@@ -29,7 +35,7 @@ void FanController::stopFan()
     isFanOn = 0;
 }
 
-bool FanController::getFanStatus()
+uint8_t FanController::getFanStatus()
 {
     return isFanOn;
 }

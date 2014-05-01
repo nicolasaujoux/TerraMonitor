@@ -31,29 +31,30 @@
 #define RELAY_PCF_HEAT_PINNB 1
 #define RELAY_PCF_LIGHT_PINNB 2
 
-TempSensorThread lowSensor = TempSensorThread(LOW_SENSOR_PIN);
-SHT10SensorThread humidTempSensor = SHT10SensorThread(SHT10_CLOCK_PIN, SHT10_DATA_PIN);
-
 // Instantiate a new ThreadController
 ThreadController controller = ThreadController();
+
+/* Sensors */
+TempSensorThread lowSensor(LOW_SENSOR_PIN);
+SHT10SensorThread humidTempSensor(SHT10_CLOCK_PIN, SHT10_DATA_PIN);
 
 /* Screen init */
 LiquidCrystal_I2C lcd(0x20,20,4);
 
 /* Fan init */
-FanController extratFan(FAN_EXTRACT_PIN);
+FanController extractFan(FAN_EXTRACT_PIN);
 FanController sideFan(FAN_HEATER_SIDE_PIN);
 FanController frontFan(FAN_HEATER_FRONT_PIN);
 
 /* Relay init */
-RelayControllerI2C fogRelay (RELAY_PCF_I2C_ADDRESS, RELAY_PCF_FOG_PINNB);
-RelayControllerI2C lightRelay (RELAY_PCF_I2C_ADDRESS, RELAY_PCF_LIGHT_PINNB);
-RelayControllerI2C heatRelay (RELAY_PCF_I2C_ADDRESS, RELAY_PCF_HEAT_PINNB);
+RelayControllerI2C fogRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_FOG_PINNB);
+RelayControllerI2C lightRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_LIGHT_PINNB);
+RelayControllerI2C heatRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_HEAT_PINNB);
 
 /* Humidity controller */
-HumidityController* humidityController;
+HumidityController humidityController(&fogRelay, &humidTempSensor);
 /* Light Controller */
-LightController* lightController;
+LightController lightController(&lightRelay);
 
 void digitalClockDisplay(time_t time);
 void printDigits(int digits, char separator);
@@ -66,11 +67,11 @@ void timerCallback()
 }
 
 // functions to be called when an alarm triggers:
-void MorningAlarm(){
-  fogRelay.on();
-  delay(30000);
-  fogRelay.off();
-}
+// void MorningAlarm(){
+//   fogRelay.on();
+//   delay(30000);
+//   fogRelay.off();
+// }
 
 void setup()
 {
@@ -101,8 +102,9 @@ void setup()
     else
         Serial.println("RTC has set the system time");
 
-    humidityController = new HumidityController(&fogRelay, &humidTempSensor);
-    lightController = new LightController(&lightRelay);
+    /* Controller Alarm init */
+    humidityController.initAlarms();
+    lightController.initAlarms();
 
     /* read the sensor every s */
     lowSensor.setInterval(1000);
@@ -117,16 +119,19 @@ void setup()
     Timer1.attachInterrupt(timerCallback);
 
     // Alarms
-    Alarm.alarmRepeat(12,00,0, MorningAlarm);  // 8:30am every day
+    //Alarm.alarmRepeat(12,00,0, MorningAlarm);  // 8:30am every day
     // Alarm.alarmRepeat(14,48,0, MorningAlarm);  // 8:30am every day
-    Alarm.alarmRepeat(17,30,0, MorningAlarm);  // 8:30am every day
-    Alarm.alarmRepeat(22,15,0, MorningAlarm);  // 8:30am every day
+    //Alarm.alarmRepeat(17,30,0, MorningAlarm);  // 8:30am every day
+    //Alarm.alarmRepeat(22,15,0, MorningAlarm);  // 8:30am every day
 
-    // humidityController->setAlarm(0, 11, 30, 30, 4);
-    // humidityController->setAlarm(1, 11, 42, 30, 8);
+    humidityController.disableAllAlarms();
+    humidityController.setAlarm(0, 12, 0, 0, 30);
+    humidityController.setAlarm(1, 15, 0, 0, 15);
+    humidityController.setAlarm(2, 18, 0, 0, 15);
+    humidityController.setAlarm(3, 22, 15, 0, 30);
 
-    // lightController->setStartTime(11,30,0);
-    // lightController->setStopTime(23,30,0);
+    // lightController.setStartTime(11,30,0);
+    // lightController.setStopTime(23,30,0);
 
     lcd.init();                      // initialize the lcd 
  
@@ -171,7 +176,6 @@ void loop()
     // // heatRelay.off();
     lcd.setCursor(0,1);
     Alarm.delay(1000);
-    delay(1000);
 }
 
 void digitalClockDisplay(time_t time)

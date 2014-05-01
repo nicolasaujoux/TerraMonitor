@@ -25,52 +25,6 @@ LightController::LightController(RelayControllerI2C* _lightRelayCommand)
     initAlarms();
 }
 
-uint8_t LightController::setStartTime(uint8_t _hour, uint8_t _min, uint8_t _sec)
-{
-    alarms[LIGHT_CONTROLLER_START_INDEX].params.hour = _hour;
-    alarms[LIGHT_CONTROLLER_START_INDEX].params.min = _min;
-    alarms[LIGHT_CONTROLLER_START_INDEX].params.sec = _sec;
-
-    if (createAlarm(LIGHT_CONTROLLER_START_INDEX) != SUCCESS)
-    {
-        return ERROR;
-    }
-
-    /* Saves Alarm in EEPROM */
-    writeEepromAlarm(LIGHT_CONTROLLER_START_INDEX, &(alarms[LIGHT_CONTROLLER_START_INDEX].params));
-}
-
-uint8_t LightController::setStopTime(uint8_t _hour, uint8_t _min, uint8_t _sec)
-{
-    alarms[LIGHT_CONTROLLER_STOP_INDEX].params.hour = _hour;
-    alarms[LIGHT_CONTROLLER_STOP_INDEX].params.min = _min;
-    alarms[LIGHT_CONTROLLER_STOP_INDEX].params.sec = _sec;
-
-    if (createAlarm(LIGHT_CONTROLLER_STOP_INDEX) != SUCCESS)
-    {
-        return ERROR;
-    }
-
-    /* Saves Alarm in EEPROM */
-    writeEepromAlarm(LIGHT_CONTROLLER_STOP_INDEX, &(alarms[LIGHT_CONTROLLER_STOP_INDEX].params));
-}
-
-/**********************************************
- Private functions 
- **********************************************/
-
-void LightController::lightAlarmStop()
-{
-    lightRelayCommand->off();
-    isLightOn = 0;
-}
-
-void LightController::lightAlarmStart()
-{
-    lightRelayCommand->on();
-    isLightOn = 1;
-}
-
 uint8_t LightController::initAlarms ()
 {
     uint32_t currentTime, startTime, stopTime;
@@ -124,6 +78,52 @@ uint8_t LightController::initAlarms ()
     isLightOn = 0;
 
     return SUCCESS;
+}
+
+uint8_t LightController::setStartTime(uint8_t _hour, uint8_t _min, uint8_t _sec)
+{
+    alarms[LIGHT_CONTROLLER_START_INDEX].params.hour = _hour;
+    alarms[LIGHT_CONTROLLER_START_INDEX].params.min = _min;
+    alarms[LIGHT_CONTROLLER_START_INDEX].params.sec = _sec;
+
+    if (createAlarm(LIGHT_CONTROLLER_START_INDEX) != SUCCESS)
+    {
+        return ERROR;
+    }
+
+    /* Saves Alarm in EEPROM */
+    writeEepromAlarm(LIGHT_CONTROLLER_START_INDEX, &(alarms[LIGHT_CONTROLLER_START_INDEX].params));
+}
+
+uint8_t LightController::setStopTime(uint8_t _hour, uint8_t _min, uint8_t _sec)
+{
+    alarms[LIGHT_CONTROLLER_STOP_INDEX].params.hour = _hour;
+    alarms[LIGHT_CONTROLLER_STOP_INDEX].params.min = _min;
+    alarms[LIGHT_CONTROLLER_STOP_INDEX].params.sec = _sec;
+
+    if (createAlarm(LIGHT_CONTROLLER_STOP_INDEX) != SUCCESS)
+    {
+        return ERROR;
+    }
+
+    /* Saves Alarm in EEPROM */
+    writeEepromAlarm(LIGHT_CONTROLLER_STOP_INDEX, &(alarms[LIGHT_CONTROLLER_STOP_INDEX].params));
+}
+
+/**********************************************
+ Private functions 
+ **********************************************/
+
+void LightController::lightAlarmStop()
+{
+    lightRelayCommand->off();
+    isLightOn = 0;
+}
+
+void LightController::lightAlarmStart()
+{
+    lightRelayCommand->on();
+    isLightOn = 1;
 }
 
 void LightController::readEepromAlarm (uint8_t _index, LightAlarmParameters_t* _pParams)
