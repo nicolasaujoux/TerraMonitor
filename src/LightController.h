@@ -29,9 +29,14 @@ class LightController
 {
 public:
     LightController(RelayI2CDriver* lightRelayCommand);
+
+    /* Get the information saved in the EEPROM and set the light alarms 
+     * The clock need to be set before calling it */ 
     uint8_t initAlarms ();
 
+    /* Set the time at which the light turns on */
     uint8_t setStartTime(uint8_t hour, uint8_t min, uint8_t sec);
+    /* Set the time at which the light turns off */
     uint8_t setStopTime(uint8_t hour, uint8_t min, uint8_t sec);
 
 protected:

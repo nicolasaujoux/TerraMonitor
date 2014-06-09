@@ -16,6 +16,7 @@ class TempControllerThread: public Thread
 public:
     TempControllerThread(RelayI2CDriver* pHeaterRelayCommand, FanDriver* pHeaterFan, 
         FanDriver* pExtractFan, FanDriver* pHeaterFan2);
+    /* run is automatically called by the Thread process */
     void run();
 
 protected:

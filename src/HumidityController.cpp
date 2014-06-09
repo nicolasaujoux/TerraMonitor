@@ -17,8 +17,10 @@ static FansController* fansController;
 
 static uint8_t isFogging;
 static uint16_t antiSteamFanTimer;
+static uint8_t antiSteamFanDelay;
 
-#define ANTI_STEAM_TIMER_DEFAULT 30
+#define ANTI_STEAM_TIMER_DEFAULT 90
+#define ANTI_STEAM_DELAY_DEFAULT 30
 
 HumidityController::HumidityController(RelayI2CDriver* _humidityRelayCommand, 
     SHT10SensorThread* _humiditySensor, FansController* _fans)
@@ -38,6 +40,8 @@ HumidityController::HumidityController(RelayI2CDriver* _humidityRelayCommand,
 
     pAntiSteamFanTimer = &antiSteamFanTimer;
     antiSteamFanTimer = ANTI_STEAM_TIMER_DEFAULT;
+    pAntiSteamFanDelay = &antiSteamFanDelay;
+    antiSteamFanDelay = ANTI_STEAM_DELAY_DEFAULT;
 
     initAlarms();
 }
@@ -118,11 +122,16 @@ void HumidityController::setAntiSteamFanTimer(uint16_t timer)
  Private functions 
  **********************************************/
 
+void HumidityController::startAntiSteamFan()
+{
+    fansController->airInForSeconds(antiSteamFanTimer);
+}
+
 void HumidityController::fogAlarmStop()
 {
     humidityRelayCommand->off();
     isFogging = 0;
-    fansController->airInForSeconds(antiSteamFanTimer);
+    Alarm.timerOnce(antiSteamFanDelay, startAntiSteamFan);
     Serial.println("stop");
 }
 

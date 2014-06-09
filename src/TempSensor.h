@@ -14,6 +14,9 @@ class TempSensorThread: public Thread
 {
 public:
     TempSensorThread(int pin);
+    /* run is automatically called by the Thread process 
+     * it updates the temperature and humidity therefor, calling getAverageValue retuns the
+     * value from the last call to run() */
     void run();
     float getAverageValue() const {return averageValue;}
     float getMinValue() const {return minValue;}

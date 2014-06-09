@@ -13,6 +13,9 @@ class SHT10SensorThread: public Thread
 public:
     SHT10SensorThread(int clock, int data);
     ~SHT10SensorThread();
+    /* run is automatically called by the Thread process 
+     * it updates the temperature and humidity therefor, calling getTemp or getHumidity retuns the
+     * value from the last call to run() */
     void run();
     float getTemp() const {return temp;}
     float getMinTemp() const {return minTemp;}
