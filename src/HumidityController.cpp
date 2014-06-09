@@ -113,9 +113,10 @@ uint8_t HumidityController::disableAllAlarms ()
     return SUCCESS;
 }
 
-void HumidityController::setAntiSteamFanTimer(uint16_t timer)
+void HumidityController::setAntiSteamFanTimers(uint8_t delay, uint16_t timer)
 {
     *pAntiSteamFanTimer = timer;
+    *pAntiSteamFanDelay = delay;
 }
 
 /**********************************************
