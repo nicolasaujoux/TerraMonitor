@@ -1,24 +1,24 @@
 /*
-* FanController.cpp
+* FanDriver.cpp
 */
 
-#include "FanController.h"
+#include "FanDriver.h"
 #include "common.h"
 
 #include <Arduino.h>
 
-#define FANCONTROLLER_DEFAULT_MAX_SPEED 255
+#define FANDRIVER_DEFAULT_MAX_SPEED 255
 
-FanController::FanController(uint8_t _pwmPin)
+FanDriver::FanDriver(uint8_t _pwmPin)
 {
 	pwmPin = _pwmPin;
-    maxSpeed = FANCONTROLLER_DEFAULT_MAX_SPEED;
+    maxSpeed = FANDRIVER_DEFAULT_MAX_SPEED;
 
     /* We stop the fan at init */
     stopFan();
 }
 
-uint8_t FanController::startFan()
+uint8_t FanDriver::startFan()
 {
     if (isFanOn != 1)
     {
@@ -29,13 +29,13 @@ uint8_t FanController::startFan()
     return FAN_ALREADY_RUNNING;
 }
 
-void FanController::stopFan()
+void FanDriver::stopFan()
 {
     analogWrite(pwmPin, 0);
     isFanOn = 0;
 }
 
-uint8_t FanController::getFanStatus()
+uint8_t FanDriver::getFanStatus()
 {
     return isFanOn;
 }

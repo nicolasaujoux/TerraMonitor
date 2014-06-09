@@ -6,7 +6,7 @@
 #define LIGHT_CONTROLLER_H
 
 #include "common.h"
-#include "RelayControllerI2C.h"
+#include "RelayI2CDriver.h"
 
 #include <TimeAlarms.h>
 
@@ -28,7 +28,7 @@ typedef struct
 class LightController
 {
 public:
-    LightController(RelayControllerI2C* lightRelayCommand);
+    LightController(RelayI2CDriver* lightRelayCommand);
     uint8_t initAlarms ();
 
     uint8_t setStartTime(uint8_t hour, uint8_t min, uint8_t sec);

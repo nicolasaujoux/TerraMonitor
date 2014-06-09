@@ -12,11 +12,11 @@
 /* Global variable to be accessible from TimeAlarms library 
 * probably not the best option but nothing else comes to mind right now ...
 */
-static RelayControllerI2C* lightRelayCommand;
+static RelayI2CDriver* lightRelayCommand;
 
 static uint8_t isLightOn;
 
-LightController::LightController(RelayControllerI2C* _lightRelayCommand)
+LightController::LightController(RelayI2CDriver* _lightRelayCommand)
 {
     lightRelayCommand = _lightRelayCommand;
     pIsLightOn = &isLightOn;

@@ -6,16 +6,17 @@
 #define TEMP_CONTROLLER_H
 
 #include "common.h"
-#include "RelayControllerI2C.h"
- #include "FanController.h"
+#include "RelayI2CDriver.h"
+ #include "FanDriver.h"
 
 #include <TimeAlarms.h>
 
-class TempController
+class TempControllerThread: public Thread
 {
 public:
-    TempController(RelayControllerI2C* pHeaterRelayCommand, FanController* pHeaterFan, 
-        FanController* pExtractFan, FanController* pHeaterFan2 = 0);
+    TempControllerThread(RelayI2CDriver* pHeaterRelayCommand, FanDriver* pHeaterFan, 
+        FanDriver* pExtractFan, FanDriver* pHeaterFan2);
+    void run();
 
 protected:
 

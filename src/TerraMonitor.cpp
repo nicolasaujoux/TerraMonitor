@@ -12,10 +12,11 @@
 
 #include "TempSensor.h"
 #include "SHT10Sensor.h"
-#include "FanController.h"
-#include "RelayControllerI2C.h"
+#include "FanDriver.h"
+#include "RelayI2CDriver.h"
 #include "HumidityController.h"
 #include "LightController.h"
+#include "FansController.h"
 
 #define LOW_SENSOR_PIN 0
 
@@ -42,17 +43,19 @@ SHT10SensorThread humidTempSensor(SHT10_CLOCK_PIN, SHT10_DATA_PIN);
 LiquidCrystal_I2C lcd(0x20,20,4);
 
 /* Fan init */
-FanController extractFan(FAN_EXTRACT_PIN);
-FanController sideFan(FAN_HEATER_SIDE_PIN);
-FanController frontFan(FAN_HEATER_FRONT_PIN);
+FanDriver extractFan(FAN_EXTRACT_PIN);
+FanDriver sideFan(FAN_HEATER_SIDE_PIN);
+FanDriver frontFan(FAN_HEATER_FRONT_PIN);
+
+FansController fans(&extractFan, &frontFan, &sideFan);
 
 /* Relay init */
-RelayControllerI2C fogRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_FOG_PINNB);
-RelayControllerI2C lightRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_LIGHT_PINNB);
-RelayControllerI2C heatRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_HEAT_PINNB);
+RelayI2CDriver fogRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_FOG_PINNB);
+RelayI2CDriver lightRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_LIGHT_PINNB);
+RelayI2CDriver heatRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_HEAT_PINNB);
 
 /* Humidity controller */
-HumidityController humidityController(&fogRelay, &humidTempSensor);
+HumidityController humidityController(&fogRelay, &humidTempSensor, &fans);
 /* Light Controller */
 LightController lightController(&lightRelay);
 
@@ -75,6 +78,7 @@ void timerCallback()
 
 void setup()
 {
+
     tmElements_t currentTime;
 
     currentTime.Second = 0;
@@ -128,10 +132,16 @@ void setup()
     humidityController.setAlarm(0, 12, 0, 0, 30);
     humidityController.setAlarm(1, 15, 0, 0, 15);
     humidityController.setAlarm(2, 18, 0, 0, 15);
-    humidityController.setAlarm(3, 22, 15, 0, 30);
+    humidityController.setAlarm(3, 22, 15, 0, 20);
 
-    // lightController.setStartTime(11,30,0);
-    // lightController.setStopTime(23,30,0);
+    // humidityController.setAlarm(4, 16, 10, 0, 10);
+
+    lightController.setStartTime(11,30,0);
+    lightController.setStopTime(23,30,0);
+
+    // extractFan.startFan();
+    // sideFan.startFan();
+    // frontFan.startFan();
 
     lcd.init();                      // initialize the lcd 
  
@@ -168,11 +178,11 @@ void loop()
     lcd.print("Degres C");
 
     // fogRelay.on();
-    // // lightRelay.on();
+    // lightRelay.on();
     // // heatRelay.on();
     // delay(5000);
     // fogRelay.off();
-    // // lightRelay.off();
+    // lightRelay.off();
     // // heatRelay.off();
     lcd.setCursor(0,1);
     Alarm.delay(1000);
@@ -180,18 +190,25 @@ void loop()
 
 void digitalClockDisplay(time_t time)
 {
-  // digital clock display of the time
-  printDigits(hour(time), NULL);
-  printDigits(minute(time), ':');
-  printDigits(second(time), ':');
+    // digital clock display of the time
+    printDigits(hour(time), NULL);
+    printDigits(minute(time), ':');
+    printDigits(second(time), ':');
 }
 
 void printDigits(int digits, char separator)
 {
-  if (separator != NULL)
-    Serial.print(separator);
-  if(digits < 10)
-    Serial.print('0');
-  Serial.print(digits);
+    if (separator != NULL)
+    {
+        lcd.print(separator);
+        Serial.print(separator);
+    }
+    if(digits < 10)
+    {
+        lcd.print('0');
+        Serial.print('0');
+    }
+    lcd.print(digits);
+    Serial.print(digits);
 }
 

@@ -10,16 +10,22 @@
 /* Global variable to be accessible from TimeAlarms library 
 * probably not the best option but nothing else comes to mind right now ...
 */
-static RelayControllerI2C* humidityRelayCommand;
+static RelayI2CDriver* humidityRelayCommand;
 static HumidityControllerAlarm_t alarms[HUMIDITY_CONTROLLER_MAX_NB_ALARMS];
 static SHT10SensorThread* humiditySensor;
+static FansController* fansController;
 
 static uint8_t isFogging;
+static uint16_t antiSteamFanTimer;
 
-HumidityController::HumidityController(RelayControllerI2C* _humidityRelayCommand, SHT10SensorThread* _humiditySensor)
+#define ANTI_STEAM_TIMER_DEFAULT 30
+
+HumidityController::HumidityController(RelayI2CDriver* _humidityRelayCommand, 
+    SHT10SensorThread* _humiditySensor, FansController* _fans)
 {
     humidityRelayCommand = _humidityRelayCommand;
     humiditySensor = _humiditySensor;
+    fansController = _fans;
 
     /* set all alarmsId of the array to 255 (alarm free) */
     for (uint8_t i = 0; i < HUMIDITY_CONTROLLER_MAX_NB_ALARMS; ++i)
@@ -29,6 +35,9 @@ HumidityController::HumidityController(RelayControllerI2C* _humidityRelayCommand
 
     pIsFogging = &isFogging;
     isFogging = 0;
+
+    pAntiSteamFanTimer = &antiSteamFanTimer;
+    antiSteamFanTimer = ANTI_STEAM_TIMER_DEFAULT;
 
     initAlarms();
 }
@@ -100,6 +109,11 @@ uint8_t HumidityController::disableAllAlarms ()
     return SUCCESS;
 }
 
+void HumidityController::setAntiSteamFanTimer(uint16_t timer)
+{
+    *pAntiSteamFanTimer = timer;
+}
+
 /**********************************************
  Private functions 
  **********************************************/
@@ -108,6 +122,7 @@ void HumidityController::fogAlarmStop()
 {
     humidityRelayCommand->off();
     isFogging = 0;
+    fansController->airInForSeconds(antiSteamFanTimer);
     Serial.println("stop");
 }
 

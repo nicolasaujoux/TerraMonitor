@@ -7,8 +7,9 @@
 
 #include "common.h"
 
-#include "RelayControllerI2C.h"
+#include "RelayI2CDriver.h"
 #include "SHT10Sensor.h"
+#include "FansController.h"
 
 #include <TimeAlarms.h>
 
@@ -44,7 +45,7 @@ typedef struct
 class HumidityController
 {
 public:
-    HumidityController(RelayControllerI2C* relayCommand, SHT10SensorThread* humiditySensor);
+    HumidityController(RelayI2CDriver* relayCommand, SHT10SensorThread* humiditySensor, FansController* fans);
     uint8_t initAlarms ();
 
     void setMode (controlMode_t mode);
@@ -55,6 +56,9 @@ public:
 
     uint8_t getIsFogging() const {return *pIsFogging;}
 
+    uint16_t getAntiSteamFanTimer() const {return *pAntiSteamFanTimer;}
+    void setAntiSteamFanTimer(uint16_t timer);
+
 protected:
     void readEepromAlarm (uint8_t index, HumidityAlarmParameters_t* params);
     void writeEepromAlarm (uint8_t index, HumidityAlarmParameters_t* params);
@@ -64,6 +68,8 @@ protected:
 
     controlMode_t mode;
     uint8_t* pIsFogging;
+
+    uint16_t* pAntiSteamFanTimer;
 };
 
 #endif /* HUMIDITY_CONTROLLER_H */

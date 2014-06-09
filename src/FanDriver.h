@@ -1,16 +1,16 @@
 /*
- * FanController.h
+ * FanDriver.h
  */
 
-#ifndef FAN_CONTROLLER_H
-#define FAN_CONTROLLER_H
+#ifndef FAN_DRIVER_H
+#define FAN_DRIVER_H
 
 #include <inttypes.h>
 
-class FanController
+class FanDriver
 {
 public:
-    FanController(uint8_t pwmPin);
+    FanDriver(uint8_t pwmPin);
 
     uint8_t startFan();
     void stopFan();
@@ -22,7 +22,7 @@ protected:
     uint8_t isFanOn;
 };
 
-#endif /* FAN_CONTROLLER_H */
+#endif /* FAN_DRIVER_H */
 /*
  * EOF
  */
