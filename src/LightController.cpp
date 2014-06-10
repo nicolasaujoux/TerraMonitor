@@ -46,34 +46,14 @@ uint8_t LightController::initAlarms ()
         minutesToTime_t(alarms[LIGHT_CONTROLLER_STOP_INDEX].params.min) + 
         alarms[LIGHT_CONTROLLER_STOP_INDEX].params.sec;
 
-    Serial.println(currentTime);
-    Serial.println(startTime);
-    Serial.println(stopTime);
     /* Check if the light needs to be on or off */
     if ((currentTime >= startTime) && (currentTime < stopTime))
     {
         lightRelayCommand->on();
         isLightOn = 1;
-        Serial.println("light is on");
         return SUCCESS;
     }
-    // if ((hour() >= alarms[LIGHT_CONTROLLER_START_INDEX].params.hour) && 
-    //     (hour() <= alarms[LIGHT_CONTROLLER_STOP_INDEX].params.hour))
-    // {
-    //     if ((minute() >= alarms[LIGHT_CONTROLLER_START_INDEX].params.min) && 
-    //         (minute() <= alarms[LIGHT_CONTROLLER_STOP_INDEX].params.min))
-    //     {
-    //         if ((second() >= alarms[LIGHT_CONTROLLER_START_INDEX].params.sec) && 
-    //             (second() <= alarms[LIGHT_CONTROLLER_STOP_INDEX].params.sec))
-    //         {
-    //             lightRelayCommand->on();
-    //             isLightOn = 1;
-    //             Serial.println("light is on");
-    //             return SUCCESS;
-    //         }
-    //     }
-    // }
-    Serial.println("light is off");
+
     lightRelayCommand->off();
     isLightOn = 0;
 

@@ -8,7 +8,11 @@
 #include "Time.h"
 
 // #define dtNBR_ALARMS 6   // max is 255
-#define dtNBR_ALARMS 10   // max is 255
+#define dtNBR_ALARMS 12   // max is 255
+/* 2 for LightController 
+ * 6 for HumidityController + 1 to launch fans
+ * 2 for FansController
+ */
 
 #define USE_SPECIALIST_METHODS  // define this for testing
 

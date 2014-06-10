@@ -22,8 +22,12 @@ public:
     static void stopExtract();
     static void stopAirIn();
 
-protected:
+    uint8_t getIsExtracting() const {return *pIsExtracting;}
+    uint8_t getIsAiring() const {return *pIsAiring;}
 
+protected:
+    uint8_t* pIsExtracting; 
+    uint8_t* pIsAiring;
 };
 
 #endif /* FANSCONTROLLER_H */

@@ -11,16 +11,15 @@
 
 #include <TimeAlarms.h>
 
-class TempControllerThread: public Thread
+class TempController: public Thread
 {
 public:
-    TempControllerThread(RelayI2CDriver* pHeaterRelayCommand, FanDriver* pHeaterFan, 
-        FanDriver* pExtractFan, FanDriver* pHeaterFan2);
+    TempController(RelayI2CDriver* pHeaterRelayCommand, FansController* pFans, SHT10SensorThread* pTempSensor);
     /* run is automatically called by the Thread process */
     void run();
 
 protected:
-
+    float (*pGetTemp)();
 
 };
 

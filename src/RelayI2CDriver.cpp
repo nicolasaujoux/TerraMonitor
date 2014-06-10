@@ -13,16 +13,12 @@ RelayI2CDriver::RelayI2CDriver(uint8_t _i2cAddress, uint8_t _PCFPinNb)
 {
     i2cAddress = _i2cAddress;
     PCFPinNb = _PCFPinNb;
-
-    // off();
 }
 
 void RelayI2CDriver::on()
 {
     Wire.beginTransmission(i2cAddress);
-    Serial.println(PCFOutputState);
-    PCFOutputState &= ~(1 << PCFPinNb); //this doesn't work ??
-    Serial.println(PCFOutputState);
+    PCFOutputState &= ~(1 << PCFPinNb);
     Wire.write(PCFOutputState);
     Wire.endTransmission();
 
@@ -32,9 +28,7 @@ void RelayI2CDriver::on()
 void RelayI2CDriver::off()
 {
     Wire.beginTransmission(i2cAddress);
-    Serial.println(PCFOutputState);
-    PCFOutputState |= (1 << PCFPinNb);  
-    Serial.println(PCFOutputState);  
+    PCFOutputState |= (1 << PCFPinNb); 
     Wire.write(PCFOutputState); 
     Wire.endTransmission();
 

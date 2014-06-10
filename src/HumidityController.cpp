@@ -130,15 +130,17 @@ void HumidityController::startAntiSteamFan()
 
 void HumidityController::fogAlarmStop()
 {
+    AlarmID_t ret;
+
     humidityRelayCommand->off();
     isFogging = 0;
     Alarm.timerOnce(antiSteamFanDelay, startAntiSteamFan);
-    Serial.println("stop");
 }
 
 void HumidityController::fogAlarmStart()
 {
     uint8_t i;
+    AlarmID_t ret;
     AlarmID_t tmpId; 
     tmpId = Alarm.getTriggeredAlarmId();
 
@@ -154,9 +156,13 @@ void HumidityController::fogAlarmStart()
     humidityRelayCommand->on();
     isFogging = 1;
 
-    Serial.println("start");
     /* Set up a timer to stop the relay */
-    Alarm.timerOnce(alarms[i].params.duration, fogAlarmStop);
+    ret = Alarm.timerOnce(alarms[i].params.duration, fogAlarmStop);
+    if (ret == dtINVALID_ALARM_ID)
+    {
+        humidityRelayCommand->off();
+        isFogging = 0;
+    }
 }
 
 void HumidityController::readEepromAlarm (uint8_t _index, HumidityAlarmParameters_t* _pParams)

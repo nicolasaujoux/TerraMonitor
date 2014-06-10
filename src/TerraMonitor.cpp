@@ -17,6 +17,7 @@
 #include "HumidityController.h"
 #include "LightController.h"
 #include "FansController.h"
+#include "TempController.h"
 
 #define LOW_SENSOR_PIN 0
 
@@ -58,6 +59,8 @@ RelayI2CDriver heatRelay(RELAY_PCF_I2C_ADDRESS, RELAY_PCF_HEAT_PINNB);
 HumidityController humidityController(&fogRelay, &humidTempSensor, &fans);
 /* Light Controller */
 LightController lightController(&lightRelay);
+/* Temperature controller */
+TempController tempController(&heatRelay, &fans, &humidTempSensor);
 
 void digitalClockDisplay(time_t time);
 void printDigits(int digits, char separator);
@@ -114,10 +117,13 @@ void setup()
     lowSensor.setInterval(1000);
     /* read the sensor every 10s */
     humidTempSensor.setInterval(10000); 
+    /* run temp controller every s */
+    tempController.setInterval(1000);
 
     /* add the thread to the controller */
     controller.add(&lowSensor);
     controller.add(&humidTempSensor);
+    controller.add(&tempController);
     
     Timer1.initialize(100000);
     Timer1.attachInterrupt(timerCallback);
