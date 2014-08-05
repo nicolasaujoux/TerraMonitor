@@ -5,8 +5,8 @@ TempSensorThread::TempSensorThread(int _pin)
 {
     /* init the pin to read from */
     analogPin = _pin;
-    multCoeff = 1.85;
-    analogReference(INTERNAL);
+    multCoeff = 2.30;
+    // analogReference(INTERNAL);
     nbIter = 0;
 
     /* init the average array with 0 */
@@ -20,21 +20,21 @@ TempSensorThread::TempSensorThread(int _pin)
 
 void TempSensorThread::run()
 {
-    float reading;
-    float temp;
+    int reading;
+
     /* we read the value and convert it */
     reading = analogRead(analogPin);
-    temp = reading / 9.31 * multCoeff;
 
     /* store it in the historic array and compute average */
-    historicValue[nbIter] = temp;
+    historicValue[nbIter] = reading;
     nbIter++;
     if (nbIter >= TEMPSENSOR_HISTORIC_MAX_NB_VALUE)
     {
         nbIter = 0;
     }
 
-    computeAverage();
+    averageValue = multCoeff * 110 * (float)reading / 1024;
+    // computeAverage();
     computeMinMax();
     runned();
 }
@@ -57,7 +57,8 @@ void TempSensorThread::computeAverage()
     tmpAverage /= diviser;
 
     /* update of the class value */
-    averageValue = tmpAverage;
+    // averageValue = tmpAverage / 9.31 * multCoeff;
+    averageValue = multCoeff * 110 * (float)tmpAverage / 1024;
 }
 
 void TempSensorThread::computeMinMax()

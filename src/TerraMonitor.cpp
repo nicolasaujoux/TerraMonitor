@@ -10,7 +10,7 @@
 
 #include "common.h"
 
-#include "TempSensor.h"
+#include "DS18B20TempSensor.h"
 #include "SHT10Sensor.h"
 #include "FanDriver.h"
 #include "RelayI2CDriver.h"
@@ -19,7 +19,9 @@
 #include "FansController.h"
 #include "TempController.h"
 
-#define LOW_SENSOR_PIN 0
+#define DS18B20 0x28     // Adresse 1-Wire du DS18B20
+#define LOW_SENSOR_PIN 12 // Broche utilisée pour le bus 1-Wire
+#define HIGH_SENSOR_PIN 13 // Broche utilisée pour le bus 1-Wire
 
 #define SHT10_DATA_PIN 10
 #define SHT10_CLOCK_PIN 11
@@ -37,7 +39,9 @@
 ThreadController controller = ThreadController();
 
 /* Sensors */
-TempSensorThread lowSensor(LOW_SENSOR_PIN);
+// TempSensorThread lowSensor(LOW_SENSOR_PIN);
+DS18B20TempSensorThread lowSensor(DS18B20, LOW_SENSOR_PIN);
+DS18B20TempSensorThread highSensor(DS18B20, HIGH_SENSOR_PIN);
 SHT10SensorThread humidTempSensor(SHT10_CLOCK_PIN, SHT10_DATA_PIN);
 
 /* Screen init */
@@ -98,7 +102,7 @@ void setup()
     Serial.println("TerraMonitor starting ...");
     Wire.begin(); 
 
-    
+    // analogReference(INTERNAL);
 
     Serial.print("EEPROM HumidityController size occupied (in bytes) : ");
     Serial.println(EEPROM_HUMIDITY_CONTROLLER_SIZE);
@@ -114,7 +118,8 @@ void setup()
     lightController.initAlarms();
 
     /* read the sensor every s */
-    lowSensor.setInterval(1000);
+    lowSensor.setInterval(5000);
+    highSensor.setInterval(5000);
     /* read the sensor every 10s */
     humidTempSensor.setInterval(10000); 
     /* run temp controller every s */
@@ -122,6 +127,7 @@ void setup()
 
     /* add the thread to the controller */
     controller.add(&lowSensor);
+    controller.add(&highSensor);
     controller.add(&humidTempSensor);
     controller.add(&tempController);
     
@@ -167,21 +173,27 @@ void loop()
     // Serial.print(humidTempSensor.getHumidity());
     // Serial.print(" Temperature Bas: ");
     // Serial.println(lowSensor.getAverageValue());
-    Serial.println();
+    // Serial.println();
 
     // lcd.cursor();
     // lcd.clear();
-    lcd.setCursor(0,0);
+    lcd.setCursor(7,0);
     digitalClockDisplay(now());
     lcd.setCursor(0,1);
-    lcd.print(humidTempSensor.getTemp());
-    lcd.print("Degres C");
+    lcd.print("Up : ");
+    lcd.print(highSensor.getTemp());
+    lcd.print((char)223);
+    lcd.print('C');
     lcd.setCursor(0,2);
-    lcd.print(humidTempSensor.getHumidity());
-    lcd.print("%");
+    lcd.print("Mid : ");
+    lcd.print(humidTempSensor.getTemp());
+    lcd.print((char)223);
+    lcd.print('C');
     lcd.setCursor(0,3);
-    lcd.print(lowSensor.getAverageValue());
-    lcd.print("Degres C");
+    lcd.print("Down : ");
+    lcd.print(lowSensor.getTemp());
+    lcd.print((char)223);
+    lcd.print('C');
 
     // fogRelay.on();
     // lightRelay.on();
@@ -199,7 +211,7 @@ void digitalClockDisplay(time_t time)
     // digital clock display of the time
     printDigits(hour(time), NULL);
     printDigits(minute(time), ':');
-    printDigits(second(time), ':');
+    // printDigits(second(time), ':');
 }
 
 void printDigits(int digits, char separator)

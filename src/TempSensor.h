@@ -7,7 +7,7 @@
 
 #include "Thread.h"
 
-#define TEMPSENSOR_HISTORIC_MAX_NB_VALUE 60
+#define TEMPSENSOR_HISTORIC_MAX_NB_VALUE 30
 
 // Create a new Class, called SensorThread, that inherits from Thread
 class TempSensorThread: public Thread
@@ -26,7 +26,7 @@ public:
 protected:
     int analogPin;
     float averageValue, minValue, maxValue;
-    float historicValue[TEMPSENSOR_HISTORIC_MAX_NB_VALUE];
+    int historicValue[TEMPSENSOR_HISTORIC_MAX_NB_VALUE];
     float multCoeff;
     int nbIter;
     
