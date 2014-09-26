@@ -5,8 +5,6 @@
 #ifndef HUMIDITY_CONTROLLER_H
 #define HUMIDITY_CONTROLLER_H
 
-#include "common.h"
-
 #include "RelayI2CDriver.h"
 #include "SHT10Sensor.h"
 #include "FansController.h"

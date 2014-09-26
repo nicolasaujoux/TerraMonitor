@@ -153,6 +153,10 @@ void setup()
     lightController.setStartTime(11,30,0);
     lightController.setStopTime(23,30,0);
 
+    tempController.setMaxUpperTemp(29);
+    tempController.setMinDayLowerTemp(21);
+    tempController.setMinNightLowerTemp(21);
+
     // extractFan.startFan();
     // sideFan.startFan();
     // frontFan.startFan();

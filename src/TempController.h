@@ -5,13 +5,17 @@
 #ifndef TEMP_CONTROLLER_H
 #define TEMP_CONTROLLER_H
 
-#include "common.h"
 #include "RelayI2CDriver.h"
-#include "FanDriver.h"
 #include "DS18B20TempSensor.h"
+#include "FansController.h"
 #include "LightController.h"
 
-#include <TimeAlarms.h>
+typedef struct 
+{
+    uint8_t maxUpperTemp;
+    uint8_t minDayLowerTemp;
+    uint8_t minNightLowerTemp;
+} TempControlParameters_t;
 
 class TempController: public Thread
 {
@@ -21,8 +25,15 @@ public:
     /* run is automatically called by the Thread process */
     void run();
 
+    void setMaxUpperTemp (uint8_t temp);
+    void setMinDayLowerTemp (uint8_t temp);
+    void setMinNightLowerTemp (uint8_t temp);
+
 protected:
+	void readEepromParam (TempControlParameters_t* _pParams);
+	void writeEepromParam (TempControlParameters_t* _pParams);
     float (*pGetTemp)();
+    TempControlParameters_t tempParameters;
 
 };
 

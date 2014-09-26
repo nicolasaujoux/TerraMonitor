@@ -5,6 +5,7 @@
 #include "HumidityController.h"
 
 #include <EEPROM.h>
+#include "common.h"
 
 
 /* Global variable to be accessible from TimeAlarms library 

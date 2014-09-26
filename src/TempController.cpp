@@ -5,6 +5,7 @@
 #include "TempController.h"
 
 #include <EEPROM.h>
+#include "common.h"
 
 
 /* Global variable to be accessible from TimeAlarms library 
@@ -25,6 +26,8 @@ TempController::TempController(RelayI2CDriver* _pHeaterRelayCommand, FansControl
     pTempSensorHigh = _pTempSensorHigh;
     pTempSensorLow = _pTempSensorLow;
     pLightController = _pLightController;
+
+    readEepromParam(&tempParameters);
 }
 
 void TempController::run()
@@ -33,7 +36,7 @@ void TempController::run()
     tempHigh = pTempSensorHigh->getTemp();
     tempLow = pTempSensorLow->getTemp();
 
-    if (tempHigh >= 29)
+    if (tempHigh >= tempParameters.maxUpperTemp)
     {
         if (pFans->getIsExtracting() == false)
         {
@@ -48,7 +51,7 @@ void TempController::run()
         {
             pHeaterRelayCommand->on();    
         }
-        if (tempLow < 21)
+        if (tempLow < tempParameters.minNightLowerTemp)
         {
             if (pFans->getIsAiring() == false)
             {
@@ -67,7 +70,7 @@ void TempController::run()
         {
             pHeaterRelayCommand->off();    
         }
-        if (tempLow < 21)
+        if (tempLow < tempParameters.minDayLowerTemp)
         {
             if (pFans->getIsAiring() == false)
             {
@@ -79,7 +82,49 @@ void TempController::run()
     runned();
 }
 
+void TempController::setMaxUpperTemp (uint8_t temp)
+{
+    tempParameters.maxUpperTemp = temp;
+    writeEepromParam(&tempParameters);
+}
 
+void TempController::setMinDayLowerTemp (uint8_t temp)
+{
+    tempParameters.minDayLowerTemp = temp;
+    writeEepromParam(&tempParameters);
+}
+
+void TempController::setMinNightLowerTemp (uint8_t temp)
+{
+    tempParameters.minNightLowerTemp = temp;
+    writeEepromParam(&tempParameters);
+}
+
+void TempController::readEepromParam (TempControlParameters_t* _pParams)
+{
+    uint8_t* pRead;
+
+    pRead = (uint8_t*)_pParams;
+
+    for (uint8_t i = 0; i < (sizeof(TempControlParameters_t)/sizeof(uint8_t)); ++i)
+    {
+        *(pRead + i) = EEPROM.read(EEPROM_TEMP_CONTROLLER_START_ADDR + 
+            sizeof(TempControlParameters_t) + i);
+    }
+}
+
+void TempController::writeEepromParam (TempControlParameters_t* _pParams)
+{
+    uint8_t* pWrite;
+    
+    pWrite = (uint8_t*)_pParams;
+
+    for (uint8_t i = 0; i < (sizeof(TempControlParameters_t)/sizeof(uint8_t)); ++i)
+    {
+        EEPROM.write(EEPROM_TEMP_CONTROLLER_START_ADDR + sizeof(TempControlParameters_t) + i,
+            *(pWrite + i));
+    }
+}
 
 /*
 * EOF

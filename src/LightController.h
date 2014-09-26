@@ -5,7 +5,6 @@
 #ifndef LIGHT_CONTROLLER_H
 #define LIGHT_CONTROLLER_H
 
-#include "common.h"
 #include "RelayI2CDriver.h"
 
 #include <TimeAlarms.h>

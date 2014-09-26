@@ -5,6 +5,7 @@
 #include "LightController.h"
 
 #include <EEPROM.h>
+#include "common.h"
 
 #define LIGHT_CONTROLLER_START_INDEX 0
 #define LIGHT_CONTROLLER_STOP_INDEX 1
