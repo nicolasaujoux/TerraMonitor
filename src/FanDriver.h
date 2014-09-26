@@ -16,7 +16,7 @@ public:
     FanDriver(uint8_t pwmPin);
 
     /* Start the fan */
-    uint8_t startFan();
+    uint8_t startFan(uint8_t speed=0);
     /* Stop the fan */
     void stopFan();
     /* Return 1 if the fan is on, 0 if off */

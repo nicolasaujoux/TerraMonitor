@@ -39,6 +39,8 @@ public:
     /* Set the time at which the light turns off */
     uint8_t setStopTime(uint8_t hour, uint8_t min, uint8_t sec);
 
+    uint8_t getIsLightOn() const {return *pIsLightOn;}
+
 protected:
     void readEepromAlarm (uint8_t _index, LightAlarmParameters_t* _pParams);
     void writeEepromAlarm (uint8_t _index, LightAlarmParameters_t* _pParams);

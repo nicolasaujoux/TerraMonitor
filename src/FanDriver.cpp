@@ -18,11 +18,22 @@ FanDriver::FanDriver(uint8_t _pwmPin)
     stopFan();
 }
 
-uint8_t FanDriver::startFan()
+uint8_t FanDriver::startFan(uint8_t _speed)
 {
+    uint8_t speed;
+
+    if ((_speed == 0) || (_speed > 255))
+    {
+        speed = maxSpeed;
+    }
+    else
+    {
+        speed = _speed;
+    }
+
     if (isFanOn != 1)
     {
-        analogWrite(pwmPin, maxSpeed);
+        analogWrite(pwmPin, speed);
         isFanOn = 1;
         return SUCCESS;
     }

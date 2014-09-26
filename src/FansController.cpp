@@ -38,12 +38,12 @@ void FansController::stopAirIn()
     isAiring = 0;
 }
 
-uint8_t FansController::extractForSeconds(uint16_t timerSeconds)
+uint8_t FansController::extractForSeconds(uint16_t timerSeconds, uint8_t speed)
 {
     AlarmID_t ret;
     if (extractFan->getFanStatus() != 1)
     {
-        extractFan->startFan();
+        extractFan->startFan(speed);
     }
     else
     {
@@ -60,13 +60,13 @@ uint8_t FansController::extractForSeconds(uint16_t timerSeconds)
     return SUCCESS;
 }
 
-uint8_t FansController::airInForSeconds(uint16_t timerSeconds)
+uint8_t FansController::airInForSeconds(uint16_t timerSeconds, uint8_t speed)
 {
     AlarmID_t ret;
     if (frontFan->getFanStatus() != 1 && sideFan->getFanStatus() != 1)
     {
-        frontFan->startFan();
-        sideFan->startFan();
+        frontFan->startFan(speed);
+        sideFan->startFan(speed);
     }
     else
     {

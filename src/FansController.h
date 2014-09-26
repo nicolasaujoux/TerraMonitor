@@ -15,9 +15,9 @@ public:
     FansController(FanDriver* extractFan, FanDriver* frontFan, FanDriver* sideFan);
 
     /* Activate the extract fan (it pushes air outside the roof) for "timerSeconds" seconds */
-    uint8_t extractForSeconds(uint16_t timerSeconds);
+    uint8_t extractForSeconds(uint16_t timerSeconds, uint8_t speed=0);
     /* Activate the fan that push air in the terrarium for "timerSeconds" seconds */
-    uint8_t airInForSeconds(uint16_t timerSeconds);
+    uint8_t airInForSeconds(uint16_t timerSeconds, uint8_t speed=0);
     
     static void stopExtract();
     static void stopAirIn();
