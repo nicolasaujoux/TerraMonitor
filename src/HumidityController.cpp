@@ -153,6 +153,9 @@ void HumidityController::fogAlarmStart()
             break;
         }
     }
+    /* Disable Fans for the fogging period */
+    disableFansForSeconds(alarms[i].params.duration);
+
     /* Switch on the relay */
     humidityRelayCommand->on();
     isFogging = 1;

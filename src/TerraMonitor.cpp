@@ -26,11 +26,12 @@
 #define SHT10_DATA_PIN 10
 #define SHT10_CLOCK_PIN 11
 
+#define FAN_EXTRACT_PIN 9
+#define FAN_HEATER_SIDE_PIN 5 //old one
+#define FAN_HEATER_FRONT_PIN 6 //new one
 // #define FAN_EXTRACT_PIN 5
 // #define FAN_HEATER_SIDE_PIN 6 //old one
-#define FAN_EXTRACT_PIN 5
-#define FAN_HEATER_SIDE_PIN 6 //old one
-#define FAN_HEATER_FRONT_PIN 9 //new one
+// #define FAN_HEATER_FRONT_PIN 9 //new one
 
 #define RELAY_PCF_I2C_ADDRESS 0x38
 #define RELAY_PCF_FOG_PINNB 0
@@ -195,7 +196,7 @@ void loop()
     // lcd.print(humidTempSensor.getTemp());
     // lcd.print((char)223);
     // lcd.print('C');
-    lcd.setCursor(0,3);
+    lcd.setCursor(0,2);
     lcd.print("Down : ");
     lcd.print(lowSensor.getTemp());
     lcd.print((char)223);

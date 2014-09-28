@@ -55,12 +55,15 @@ void TempController::run()
         {
             if (pFans->getIsAiring() == false)
             {
-                pFans->airInForSeconds(200, 175);
+                pFans->airInForSeconds(60, 175);
             }
         }
         else
         {
-            pHeaterRelayCommand->off();
+            if (pFans->getIsAiring() == false)
+            {
+                pHeaterRelayCommand->off();
+            }
         }
     }
     /* Day time */

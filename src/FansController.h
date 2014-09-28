@@ -21,13 +21,19 @@ public:
     
     static void stopExtract();
     static void stopAirIn();
+    static void fansEnable();
 
     uint8_t getIsExtracting() const {return *pIsExtracting;}
     uint8_t getIsAiring() const {return *pIsAiring;}
 
+    /* Disable fans for X seconds, ie : any startFan command has no effect for this period of time */
+    uint8_t disableFansForSeconds(uint16_t time);
+
 protected:
     uint8_t* pIsExtracting; 
     uint8_t* pIsAiring;
+
+    uint8_t* pFansEnableStatus;
 };
 
 #endif /* FANSCONTROLLER_H */

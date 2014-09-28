@@ -18,6 +18,7 @@
 
 /* FAN errors */
 #define FAN_ALREADY_RUNNING 10
+#define FAN_DISABLED		11
 
 /*****************************************************
 *                  EEPROM MAPPING
