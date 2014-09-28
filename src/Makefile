@@ -1,5 +1,5 @@
-#BOARD_TAG = mega2560
-BOARD_TAG = uno
+BOARD_TAG = mega2560
+#BOARD_TAG = uno
 ARDUINO_PORT = /dev/ttyACM0
 
 USER_LIB_PATH = ../lib
