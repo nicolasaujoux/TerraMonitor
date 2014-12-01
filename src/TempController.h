@@ -15,6 +15,7 @@ typedef struct
     uint8_t maxUpperTemp;
     uint8_t minDayLowerTemp;
     uint8_t minNightLowerTemp;
+    uint8_t minNightUpperTemp;
 } TempControlParameters_t;
 
 class TempController: public Thread
@@ -28,6 +29,7 @@ public:
     void setMaxUpperTemp (uint8_t temp);
     void setMinDayLowerTemp (uint8_t temp);
     void setMinNightLowerTemp (uint8_t temp);
+    void setMinNightUpperTemp (uint8_t temp);
 
 protected:
 	void readEepromParam (TempControlParameters_t* _pParams);

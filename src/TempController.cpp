@@ -47,22 +47,25 @@ void TempController::run()
     /* If it's night time */
     if (pLightController->getIsLightOn() == false)
     {
-        if (pHeaterRelayCommand->getRelayStatus() == false)
+        if (tempHigh < tempParameters.minNightUpperTemp)
         {
-            pHeaterRelayCommand->on();    
+            if (pHeaterRelayCommand->getRelayStatus() == false)
+            {
+                pHeaterRelayCommand->on();    
+            }    
+        }
+        else 
+        {
+            if (pHeaterRelayCommand->getRelayStatus() == true)
+            {
+                pHeaterRelayCommand->off();
+            }
         }
         if (tempLow < tempParameters.minNightLowerTemp)
         {
             if (pFans->getIsAiring() == false)
             {
-                pFans->airInForSeconds(60, 175);
-            }
-        }
-        else
-        {
-            if (pFans->getIsAiring() == false)
-            {
-                pHeaterRelayCommand->off();
+                pFans->airInForSeconds(300, 255);
             }
         }
     }
@@ -77,7 +80,7 @@ void TempController::run()
         {
             if (pFans->getIsAiring() == false)
             {
-                pFans->airInForSeconds(60, 175);
+                pFans->airInForSeconds(60, 255);
             }
         }
     }
@@ -100,6 +103,12 @@ void TempController::setMinDayLowerTemp (uint8_t temp)
 void TempController::setMinNightLowerTemp (uint8_t temp)
 {
     tempParameters.minNightLowerTemp = temp;
+    writeEepromParam(&tempParameters);
+}
+
+void TempController::setMinNightUpperTemp (uint8_t temp)
+{
+    tempParameters.minNightUpperTemp = temp;
     writeEepromParam(&tempParameters);
 }
 

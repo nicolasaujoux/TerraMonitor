@@ -92,8 +92,8 @@ void setup()
     tmElements_t currentTime;
 
     currentTime.Second = 0;
-    currentTime.Minute = 50;
-    currentTime.Hour = 20;
+    currentTime.Minute = 35;
+    currentTime.Hour =18;
     currentTime.Wday = 5;
     currentTime.Day = 17;
     currentTime.Month = 4;
@@ -145,9 +145,10 @@ void setup()
 
     humidityController.disableAllAlarms();
     humidityController.setAlarm(0, 12, 0, 0, 30);
-    humidityController.setAlarm(1, 15, 0, 0, 15);
-    humidityController.setAlarm(2, 18, 0, 0, 15);
-    humidityController.setAlarm(3, 22, 15, 0, 20);
+    humidityController.setAlarm(1, 14, 0, 0, 15);
+    humidityController.setAlarm(2, 16, 0, 0, 15);
+    humidityController.setAlarm(3, 20, 0, 0, 15);
+    humidityController.setAlarm(4, 22, 15, 0, 20);
 
     // humidityController.setAlarm(4, 16, 10, 0, 10);
 
@@ -156,7 +157,8 @@ void setup()
 
     tempController.setMaxUpperTemp(29);
     tempController.setMinDayLowerTemp(21);
-    tempController.setMinNightLowerTemp(21);
+    tempController.setMinNightLowerTemp(20);
+    tempController.setMinNightUpperTemp(21);
 
     // extractFan.startFan();
     // sideFan.startFan();
